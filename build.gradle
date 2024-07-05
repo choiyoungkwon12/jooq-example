@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
     implementation ('org.springframework.boot:spring-boot-starter-jooq') {
         exclude group: 'org.jooq:jooq'
     }
@@ -63,7 +64,7 @@ jooq {
 
                     database {
                         name = 'org.jooq.meta.mysql.MySQLDatabase'
-
+                        unsignedTypes = false
 
                         schemata {
                             schema {
