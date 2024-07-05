@@ -32,7 +32,8 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    jooqGenerator 'com.mysql:mysql-connector-j'
+
+    jooqGenerator project(':jOOQ-custom')
     jooqGenerator "org.jooq:jooq:${jooqVersion}"
     jooqGenerator "org.jooq:jooq-meta:${jooqVersion}"
 }
@@ -81,6 +82,9 @@ jooq {
                     target {
                         directory = 'src/generated'
                     }
+
+                    // 왜 따로 서브모듈로까지 분리해야 할까?
+                    strategy.name = 'jooq.custom.generator.JPrefixGeneratorStrategy'
                 }
 
             }
