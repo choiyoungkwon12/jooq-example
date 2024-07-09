@@ -64,11 +64,27 @@ jooq {
 
                     database {
                         name = 'org.jooq.meta.mysql.MySQLDatabase'
-                        unsignedTypes = false
+                        unsignedTypes = true
 
                         schemata {
                             schema {
                                 inputSchema = 'sakila'
+                            }
+                        }
+                        forcedTypes {
+                            forcedType {
+                                userType = 'java.lang.Long'
+                                includeTypes = 'int unsigned'
+                            }
+
+                            forcedType {
+                                userType = 'java.lang.Integer'
+                                includeTypes = 'tinyint unsigned'
+                            }
+
+                            forcedType {
+                                userType = 'java.lang.Integer'
+                                includeTypes = 'smallint unsigned'
                             }
                         }
                     }
