@@ -3,17 +3,14 @@ package com.sight.jooqfirstlook.actor;
 
 import com.sight.jooqfirstlook.utils.jooq.JooqListConditionUtil;
 import com.sight.jooqfirstlook.utils.jooq.JooqStringConditionUtil;
-import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.generated.tables.JActor;
 import org.jooq.generated.tables.JFilm;
 import org.jooq.generated.tables.JFilmActor;
 import org.jooq.generated.tables.daos.ActorDao;
 import org.jooq.generated.tables.pojos.Actor;
 import org.jooq.generated.tables.pojos.Film;
-import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -55,8 +52,7 @@ public class ActorRepository {
         final JFilmActor FILM_ACTOR = JFilmActor.FILM_ACTOR;
         final JFilm FILM = JFilm.FILM;
         Map<Actor, List<Film>> actorListMap = dslContext.select(
-                        DSL.row(ACTOR.fields()).as("actor"),
-                        DSL.row(FILM.fields()).as("film")
+                        ACTOR, FILM
                 ).from(ACTOR)
                 .join(FILM_ACTOR)
                 .on(ACTOR.ACTOR_ID.eq(FILM_ACTOR.ACTOR_ID))
@@ -67,8 +63,8 @@ public class ActorRepository {
                         JooqStringConditionUtil.containsIfNotBlank(FILM.TITLE, searchOption.getFilmTitle())
                 )
                 .fetchGroups(
-                        record -> record.get("actor", Actor.class),
-                        record -> record.get("film", Film.class)
+                        record -> record.into(ACTOR).into(Actor.class),
+                        record -> record.into(FILM).into(Film.class)
                 );
         return actorListMap.entrySet().stream().map(entry -> new ActorFilmography(entry.getKey(), entry.getValue())).toList();
     }
