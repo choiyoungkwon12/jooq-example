@@ -1,5 +1,6 @@
 package com.sight.jooqfirstlook.film;
 
+import com.sight.jooqfirstlook.config.converter.PriceCategoryConverter;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.DatePart;
@@ -79,9 +80,9 @@ public class FilmRepositoryHasA {
                         FILM.TITLE,
                         FILM.RENTAL_RATE,
                         case_()
-                                .when(FILM.RENTAL_RATE.le(BigDecimal.valueOf(1.0)), "Cheep")
-                                .when(FILM.RENTAL_RATE.le(BigDecimal.valueOf(3.0)), "Moderate")
-                                .else_("Expensive").as("price_category"),
+                                .when(FILM.RENTAL_RATE.le(BigDecimal.valueOf(1.0)), FilmPriceSummary.PriceCategory.CHEAP.getCode())
+                                .when(FILM.RENTAL_RATE.le(BigDecimal.valueOf(3.0)), FilmPriceSummary.PriceCategory.MODERATE.getCode())
+                                .else_(FilmPriceSummary.PriceCategory.EXPENSIVE.getCode()).as("price_category").convert(new PriceCategoryConverter()),
                         selectCount().from(INVENTORY).where(INVENTORY.FILM_ID.eq(FILM.FILM_ID)).asField("total_inventory")
                 ).from(FILM)
                 .where(FILM.TITLE.like("%" + title + "%"))
