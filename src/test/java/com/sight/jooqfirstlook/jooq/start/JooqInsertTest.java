@@ -99,11 +99,11 @@ public class JooqInsertTest {
     @Test
     @DisplayName("bulk insert 예제")
     @Transactional
-    void bulk_insert() {
-        // given
-        Actor actor1 = new Actor();
-        actor1.setFirstName("John");
-        actor1.setLastName("Doe");
+        void bulk_insert() {
+            // given
+            Actor actor1 = new Actor();
+            actor1.setFirstName("John");
+            actor1.setLastName("Doe");
 
         Actor actor2 = new Actor();
         actor2.setFirstName("John 2");
