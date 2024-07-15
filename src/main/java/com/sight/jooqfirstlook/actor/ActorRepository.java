@@ -168,4 +168,8 @@ public class ActorRepository {
         ActorRecord record = dslContext.fetchOne(ACTOR, ACTOR.ACTOR_ID.eq(actorId));
         return record.delete();
     }
+
+    public ActorRecord findRecordByActorId(Long actorId) {
+        return dslContext.fetchOne(ACTOR, ACTOR.ACTOR_ID.eq(actorId));
+    }
 }
