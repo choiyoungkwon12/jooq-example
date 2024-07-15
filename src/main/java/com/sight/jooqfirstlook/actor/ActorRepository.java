@@ -11,10 +11,13 @@ import org.jooq.generated.tables.JFilmActor;
 import org.jooq.generated.tables.daos.ActorDao;
 import org.jooq.generated.tables.pojos.Actor;
 import org.jooq.generated.tables.pojos.Film;
+import org.jooq.generated.tables.records.ActorRecord;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class ActorRepository {
@@ -67,5 +70,52 @@ public class ActorRepository {
                         record -> record.into(FILM).into(Film.class)
                 );
         return actorListMap.entrySet().stream().map(entry -> new ActorFilmography(entry.getKey(), entry.getValue())).toList();
+    }
+
+    public Actor saveByDao(Actor actor) {
+        actorDao.insert(actor);
+        return actor;
+    }
+
+    public ActorRecord saveByRecord(Actor actor) {
+        ActorRecord actorRecord = dslContext.newRecord(ACTOR, actor);
+        actorRecord.insert();
+        return actorRecord;
+    }
+
+    public Long saveWithReturningPkOnly(Actor actor) {
+        return dslContext.insertInto(
+                        ACTOR, ACTOR.FIRST_NAME, ACTOR.LAST_NAME
+                ).values(
+                        actor.getFirstName(),
+                        actor.getLastName()
+                ).returningResult(ACTOR.ACTOR_ID)
+                .fetchOneInto(Long.class);
+    }
+
+    public Actor saveWithReturning(Actor actor) {
+        return dslContext.insertInto(
+                        ACTOR,
+                        ACTOR.FIRST_NAME,
+                        ACTOR.LAST_NAME
+                ).values(
+                        actor.getFirstName(),
+                        actor.getLastName()
+                ).returningResult(ACTOR.fields())
+                .fetchOneInto(Actor.class);
+    }
+
+    public void bulkInsertWithRows(List<Actor> actorList) {
+        var rows = actorList.stream().map(actor -> DSL.row(
+                actor.getFirstName(),
+                actor.getLastName()
+        )).collect(Collectors.toList());
+
+        dslContext.insertInto(
+                        ACTOR,
+                        ACTOR.FIRST_NAME,
+                        ACTOR.LAST_NAME
+                ).valuesOfRows(rows)
+                .execute();
     }
 }
